@@ -1,0 +1,11 @@
+<mat-card class="p-4 max-w-xl mx-auto">
+  <h1 class="text-2xl mb-4">Add New Project</h1>
+  <form (ngSubmit)="submit()">
+    <mat-form-field class="w-full"><input matInput placeholder="Topic" [(ngModel)]="topic" name="topic" /></mat-form-field>
+    <mat-form-field class="w-full"><textarea matInput placeholder="Description" [(ngModel)]="description" name="description"></textarea></mat-form-field>
+    <mat-form-field class="w-full"><input matInput placeholder="Repo Link" [(ngModel)]="repo_link" name="repo_link" /></mat-form-field>
+    <mat-form-field class="w-full"><input matInput placeholder="Team Members (comma)" [(ngModel)]="team" name="team" /></mat-form-field>
+    <input type="file" multiple (change)="onFileChange($event)" class="mb-4" />
+    <button mat-raised-button color="primary">Submit</button>
+  </form>
+</mat-card>

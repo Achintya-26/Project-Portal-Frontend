@@ -1,0 +1,17 @@
+<mat-card class="max-w-3xl mx-auto mt-6 p-4">
+  <h1 class="text-2xl mb-4">My Projects</h1>
+  <div *ngIf="!projects.length" class="text-gray-500">No projects submitted yet.</div>
+  <mat-card *ngFor="let project of projects" class="mb-4">
+    <mat-card-title>{{ project.topic }}</mat-card-title>
+    <mat-card-subtitle>{{ project.description }}</mat-card-subtitle>
+    <mat-card-content>
+      <p>Team: {{ project.team_members?.join(', ') }}</p>
+      <a *ngIf="project.repo_link" href="{{ project.repo_link }}" target="_blank" class="text-blue-500">View Repo</a>
+      <div *ngIf="project.attachments?.length" class="mt-2">
+        <div *ngFor="let file of project.attachments">
+          <a href="http://localhost:5000/uploads/{{ file }}" target="_blank">{{ file }}</a>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</mat-card>

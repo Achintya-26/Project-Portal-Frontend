@@ -1,0 +1,23 @@
+<div class="p-4">
+  <mat-card>
+    <mat-form-field class="w-full">
+      <input matInput placeholder="Search projects" [(ngModel)]="search" (keyup.enter)="load()" />
+    </mat-form-field>
+  </mat-card>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <mat-card *ngFor="let p of projects">
+      <mat-card-header>
+        <mat-card-title>{{ p.topic }}</mat-card-title>
+        <mat-card-subtitle>By {{ p.username }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ p.description }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a *ngIf="p.repo_link" href="{{ p.repo_link }}" target="_blank">
+          View Repo
+        </a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

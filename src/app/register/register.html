@@ -1,0 +1,17 @@
+<mat-card class="max-w-md mx-auto mt-8 p-6">
+  <h1 class="text-2xl mb-4">Register</h1>
+  <form (ngSubmit)="register()">
+    <mat-form-field class="w-full">
+      <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <input matInput placeholder="Email" [(ngModel)]="email" name="email" required>
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <input matInput placeholder="Password" [(ngModel)]="password" name="password" type="password" required>
+    </mat-form-field>
+    <div *ngIf="error" class="text-red-500 text-sm mb-2">{{ error }}</div>
+    <button mat-raised-button color="primary" type="submit">Register</button>
+  </form>
+  <p class="mt-4 text-sm">Already have an account? <a routerLink="/login" class="text-blue-500">Login</a></p>
+</mat-card>

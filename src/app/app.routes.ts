@@ -1,3 +1,14 @@
 import { Routes } from '@angular/router';
+import { ProjectList } from './project-list/project-list';
+import { Login } from './login/login';
+import { Register } from './register/register';
+import { AddProject } from './add-project/add-project';
+import { Profile } from './profile/profile';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  { path: '', component: ProjectList, pathMatch:'full'},
+  { path: 'login', component: Login },
+  { path: 'register', component: Register },
+  { path: 'add', component: AddProject },
+  { path: 'profile', component: Profile },
+];
