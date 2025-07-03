@@ -1,7 +1,7 @@
 <mat-card class="max-w-3xl mx-auto mt-6 p-4">
-  <h1 class="text-2xl mb-4">My Projects</h1>
+  <h1 class="text-2xl mb-4">My Projects:</h1>
   <div *ngIf="!projects.length" class="text-gray-500">No projects submitted yet.</div>
-  <mat-card *ngFor="let project of projects" class="mb-4">
+  <mat-card *ngFor="let project of projects" class="mb-4 p-2">
     <mat-card-title>{{ project.topic }}</mat-card-title>
     <mat-card-subtitle>{{ project.description }}</mat-card-subtitle>
     <mat-card-content>

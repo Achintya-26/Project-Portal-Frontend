@@ -1,0 +1,7 @@
+<mat-card class="p-4">
+  <h1 class="text-2xl">User Projects</h1>
+  <mat-card *ngFor="let p of projects" class="mt-4 cursor-pointer" (click)="goToProject(p.id)">
+    <mat-card-title>{{ p.topic }}</mat-card-title>
+    <mat-card-subtitle>{{ p.description }}</mat-card-subtitle>
+  </mat-card>
+</mat-card>

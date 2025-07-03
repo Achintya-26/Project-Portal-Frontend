@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private url = 'http://localhost:5000/api/projects';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(search: string = '') {
     let params = search ? new HttpParams().set('q', search) : undefined;
@@ -17,4 +17,13 @@ export class ProjectService {
   add(form: FormData) {
     return this.http.post<any>(this.url, form);
   }
+  
+  getById(id: string) {
+    return this.http.get<any>(`${this.url}/${id}`);
+  }
+
+  getByUserId(id: string) {
+    return this.http.get<any[]>(`${this.url}/user/${id}`);
+  }
+
 }

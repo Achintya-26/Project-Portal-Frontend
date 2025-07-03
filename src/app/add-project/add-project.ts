@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-project',
-  imports :[FormsModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatInputModule, MatCardActions],
+  imports :[FormsModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatInputModule],
   templateUrl: './add-project.html',
   styleUrl: './add-project.scss'
 })
@@ -33,6 +33,7 @@ export class AddProject {
     form.append('description', this.description);
     form.append('repo_link', this.repo_link);
     form.append('team_members', JSON.stringify(this.team.split(',').map(t => t.trim())));
+    console.log(this.attachments);
     this.attachments.forEach((f) => form.append('attachments', f));
 
     this.projectService.add(form).subscribe(() => {

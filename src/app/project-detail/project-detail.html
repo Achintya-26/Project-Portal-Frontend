@@ -1,0 +1,23 @@
+<mat-card class="p-6 max-w-3xl mx-auto mt-4">
+  <h1 class="text-3xl font-bold mb-2">{{ project.topic }}</h1>
+  <h2 class="text-lg text-gray-500 mb-4">By <a routerLink="/user/{{ project.user_id }}" class="text-blue-500 underline">{{ project.username }}</a></h2>
+  <p class="mb-4">{{ project.description }}</p>
+
+  <p class="mb-2"><strong>Repo:</strong> <a [href]="project.repo_link" target="_blank" class="text-blue-500 underline">{{ project.repo_link }}</a></p>
+
+  <div *ngIf="project.attachments?.length">
+    <h3 class="text-xl font-semibold mb-2">Attachments</h3>
+    <ul>
+      <li *ngFor="let file of project.attachments">
+        <a [href]="'http://localhost:5000/uploads/' + file" target="_blank" class="text-blue-600 underline">{{ file }}</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mt-4">
+    <strong>Team:</strong>
+    <ul>
+      <li *ngFor="let member of project.team_members">{{ member }}</li>
+    </ul>
+  </div>
+</mat-card>

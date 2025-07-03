@@ -6,6 +6,8 @@
     <mat-form-field class="w-full"><input matInput placeholder="Repo Link" [(ngModel)]="repo_link" name="repo_link" /></mat-form-field>
     <mat-form-field class="w-full"><input matInput placeholder="Team Members (comma)" [(ngModel)]="team" name="team" /></mat-form-field>
     <input type="file" multiple (change)="onFileChange($event)" class="mb-4" />
-    <button mat-raised-button color="primary">Submit</button>
+    <div class="flex justify-end">
+    <button class="!block" mat-raised-button color="primary">Submit</button>
+    </div>
   </form>
 </mat-card>

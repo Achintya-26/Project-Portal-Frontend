@@ -7,18 +7,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardActions } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-list',
-  imports :[FormsModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatInputModule, MatCardActions, CommonModule],
+  imports: [FormsModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatInputModule, MatCardActions, CommonModule],
   templateUrl: './project-list.html',
   styleUrl: './project-list.scss'
 })
 export class ProjectList implements OnInit {
-  projects:any[] = [];
+  projects: any[] = [];
   search = '';
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService,  private router: Router) { }
 
   ngOnInit() {
     this.load();
@@ -29,6 +30,10 @@ export class ProjectList implements OnInit {
       this.projects = res
     }
     );
+  }
+
+  viewProject(id: number) {
+    this.router.navigate(['/project', id]);
   }
 }
 

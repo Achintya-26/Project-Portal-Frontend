@@ -1,11 +1,11 @@
 <div class="p-4">
   <mat-card>
-    <mat-form-field class="w-full">
-      <input matInput placeholder="Search projects" [(ngModel)]="search" (keyup.enter)="load()" />
+    <mat-form-field   class="w-full" >
+      <input matInput class="" placeholder="Search projects" [(ngModel)]="search" (keyup.enter)="load()" />
     </mat-form-field>
   </mat-card>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-    <mat-card *ngFor="let p of projects">
+    <mat-card *ngFor="let p of projects" (click)="viewProject(p.id)">
       <mat-card-header>
         <mat-card-title>{{ p.topic }}</mat-card-title>
         <mat-card-subtitle>By {{ p.username }}</mat-card-subtitle>
