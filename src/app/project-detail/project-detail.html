@@ -1,23 +1,416 @@
-<mat-card class="p-6 max-w-3xl mx-auto mt-4">
-  <h1 class="text-3xl font-bold mb-2">{{ project.topic }}</h1>
-  <h2 class="text-lg text-gray-500 mb-4">By <a routerLink="/user/{{ project.user_id }}" class="text-blue-500 underline">{{ project.username }}</a></h2>
-  <p class="mb-4">{{ project.description }}</p>
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <mat-card class="loading-card">
+    <mat-card-content>
+      <div class="loading-content">
+        <mat-spinner diameter="40"></mat-spinner>
+        <h3>Loading Project Details...</h3>
+        <p>Please wait while we fetch the project information.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
 
-  <p class="mb-2"><strong>Repo:</strong> <a [href]="project.repo_link" target="_blank" class="text-blue-500 underline">{{ project.repo_link }}</a></p>
+<!-- Error State -->
+<div class="error-container" *ngIf="error && !loading">
+  <mat-card class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon class="error-icon">error</mat-icon>
+        <h3>{{ error }}</h3>
+        <button mat-raised-button color="primary" (click)="loadProject(route.snapshot.paramMap.get('id')!)">
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
 
-  <div *ngIf="project.attachments?.length">
-    <h3 class="text-xl font-semibold mb-2">Attachments</h3>
-    <ul>
-      <li *ngFor="let file of project.attachments">
-        <a [href]="'http://localhost:5000/uploads/' + file" target="_blank" class="text-blue-600 underline">{{ file }}</a>
-      </li>
-    </ul>
-  </div>
+<!-- Project Details -->
+<div class="project-container" *ngIf="project && !loading">
+  <!-- Project Header -->
+  <mat-card class="project-header-card">
+    <div class="project-header">
+      <div class="project-title-section">
+        <h1 class="project-title">{{ project.topic }}</h1>
+        <div class="project-meta">
+          <span class="project-owner">
+            <mat-icon>person</mat-icon>
+            Created by 
+            <a routerLink="/user/{{ project.user_id }}" class="owner-link">{{ project.username }}</a>
+          </span>
+          <span class="project-date">
+            <mat-icon>schedule</mat-icon>
+            {{ formatDate(project.created_at) }}
+          </span>
+          <span class="project-status" [ngClass]="getStatusClass(project.status)">
+            <mat-icon>info</mat-icon>
+            {{ project.status || 'Not specified' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
 
-  <div class="mt-4">
-    <strong>Team:</strong>
-    <ul>
-      <li *ngFor="let member of project.team_members">{{ member }}</li>
-    </ul>
-  </div>
-</mat-card>
+  <!-- Project Details Tabs -->
+  <mat-tab-group class="project-tabs">
+    <!-- Overview Tab -->
+    <mat-tab label="Overview">
+      <div class="tab-content">
+        <mat-card class="overview-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>info</mat-icon>
+              Project Overview
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="overview-content">
+              <div class="description-section">
+                <h4>Description</h4>
+                <p>{{ project.description || 'No description provided' }}</p>
+              </div>
+              
+              <div class="keywords-section" *ngIf="parseSearchKeywords(project.search_keywords).length > 0">
+                <h4>Keywords</h4>
+                <mat-chip-listbox>
+                  <mat-chip-option *ngFor="let keyword of parseSearchKeywords(project.search_keywords)">
+                    {{ keyword }}
+                  </mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Quick Stats -->
+        <mat-card class="stats-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>analytics</mat-icon>
+              Quick Stats
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number">{{ parseTeamMembers(project.team_members).length + 1 }}</div>
+                <div class="stat-label">Team Members</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ (project.attachments || []).length }}</div>
+                <div class="stat-label">Attachments</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ parseModules(project.modules_implemented).length }}</div>
+                <div class="stat-label">Modules</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ parseSearchKeywords(project.search_keywords).length }}</div>
+                <div class="stat-label">Keywords</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Project Details Tab -->
+    <mat-tab label="Details">
+      <div class="tab-content">
+        <mat-accordion multi>
+          <!-- Basic Information -->
+          <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>info</mat-icon>
+                Basic Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Project Name:</label>
+                <span>{{ project.topic }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Status:</label>
+                <span class="status-badge" [ngClass]="getStatusClass(project.status)">
+                  {{ project.status || 'Not specified' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <label>Source Process Template:</label>
+                <span>{{ project.source_process_template || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Agile Project:</label>
+                <span>{{ project.agile_project ? 'Yes' : 'No' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Product Version:</label>
+                <span>{{ project.product_version || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Task Tracking Mode:</label>
+                <span>{{ project.task_actuals_tracking_mode || 'Not specified' }}</span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Timeline -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>schedule</mat-icon>
+                Project Timeline
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="timeline-grid">
+              <div class="timeline-item">
+                <mat-icon>play_arrow</mat-icon>
+                <div class="timeline-content">
+                  <label>Planned Start Date:</label>
+                  <span>{{ formatDate(project.planned_start_date) }}</span>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <mat-icon>stop</mat-icon>
+                <div class="timeline-content">
+                  <label>Planned End Date:</label>
+                  <span>{{ formatDate(project.planned_end_date) }}</span>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <mat-icon>rocket_launch</mat-icon>
+                <div class="timeline-content">
+                  <label>Go Live Date:</label>
+                  <span>{{ formatDate(project.go_live_date) }}</span>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <mat-icon>flag</mat-icon>
+                <div class="timeline-content">
+                  <label>Delivery Milestone:</label>
+                  <span>{{ project.delivery_milestone || 'Not specified' }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Customer Information -->
+          <mat-expansion-panel *ngIf="project.customer_name">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>business</mat-icon>
+                Customer Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Customer Name:</label>
+                <span>{{ project.customer_name }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Customer Designation:</label>
+                <span>{{ project.customer_designation || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <label>Customer Address:</label>
+                <span>{{ project.customer_address || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <label>Contact Details:</label>
+                <span>{{ project.customer_contact_details || 'Not specified' }}</span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Financial Information -->
+          <mat-expansion-panel *ngIf="project.incidental_budget_amount || project.project_financial_status">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>attach_money</mat-icon>
+                Financial Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Budget Amount:</label>
+                <span>{{ formatCurrency(project.incidental_budget_amount) }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Financial Status:</label>
+                <span>{{ project.project_financial_status || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>EMD/BG Required:</label>
+                <span>{{ project.emd_bg_required ? 'Yes' : 'No' }}</span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Organizational Details -->
+          <mat-expansion-panel *ngIf="project.entity || project.region || project.division">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>corporate_fare</mat-icon>
+                Organizational Details
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Entity:</label>
+                <span>{{ project.entity || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Region:</label>
+                <span>{{ project.region || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Division:</label>
+                <span>{{ project.division || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Business Unit:</label>
+                <span>{{ project.business_unit || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Sub LOB:</label>
+                <span>{{ project.sub_lob || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Geography:</label>
+                <span>{{ project.geography || 'Not specified' }}</span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-tab>
+
+    <!-- Team Tab -->
+    <mat-tab label="Team">
+      <div class="tab-content">
+        <mat-card class="team-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>group</mat-icon>
+              Project Team
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Project Owner -->
+            <div class="team-section">
+              <h4>Project Owner</h4>
+              <div class="team-member owner">
+                <mat-icon>person</mat-icon>
+                <div class="member-info">
+                  <a routerLink="/user/{{ project.user_id }}" class="member-name">{{ project.username }}</a>
+                  <span class="member-role">Project Owner</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team Members -->
+            <div class="team-section" *ngIf="parseTeamMembers(project.team_members).length > 0">
+              <h4>Team Members</h4>
+              <div class="team-members-grid">
+                <div class="team-member" *ngFor="let member of parseTeamMembers(project.team_members)">
+                  <mat-icon>person</mat-icon>
+                  <div class="member-info">
+                    <span class="member-name">User ID: {{ member.userId }}</span>
+                    <span class="member-role">{{ member.resourceDetails || 'Team Member' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sales Team -->
+            <div class="team-section" *ngIf="project.sales_person_1 || project.sales_person_2 || project.sales_person_3">
+              <h4>Sales Team</h4>
+              <div class="sales-team">
+                <div class="team-member" *ngIf="project.sales_person_1">
+                  <mat-icon>sell</mat-icon>
+                  <div class="member-info">
+                    <span class="member-name">{{ project.sales_person_1 }}</span>
+                    <span class="member-role">Sales Person 1</span>
+                  </div>
+                </div>
+                <div class="team-member" *ngIf="project.sales_person_2">
+                  <mat-icon>sell</mat-icon>
+                  <div class="member-info">
+                    <span class="member-name">{{ project.sales_person_2 }}</span>
+                    <span class="member-role">Sales Person 2</span>
+                  </div>
+                </div>
+                <div class="team-member" *ngIf="project.sales_person_3">
+                  <mat-icon>sell</mat-icon>
+                  <div class="member-info">
+                    <span class="member-name">{{ project.sales_person_3 }}</span>
+                    <span class="member-role">Sales Person 3</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Modules & Attachments Tab -->
+    <mat-tab label="Resources">
+      <div class="tab-content">
+        <!-- Modules -->
+        <mat-card class="modules-card" *ngIf="parseModules(project.modules_implemented).length > 0">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>extension</mat-icon>
+              Implemented Modules
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let module of parseModules(project.modules_implemented)">
+                {{ module }}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Attachments -->
+        <mat-card class="attachments-card" *ngIf="project.attachments?.length > 0">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>attach_file</mat-icon>
+              Project Attachments
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="attachments-grid">
+              <div class="attachment-item" *ngFor="let file of project.attachments">
+                <mat-icon class="file-icon">{{ getFileIcon(file) }}</mat-icon>
+                <div class="file-info">
+                  <span class="file-name">{{ file }}</span>
+                  <button mat-icon-button (click)="downloadFile(file)" class="download-btn">
+                    <mat-icon>download</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- No Resources Message -->
+        <mat-card *ngIf="parseModules(project.modules_implemented).length === 0 && (!project.attachments || project.attachments.length === 0)" class="no-resources-card">
+          <mat-card-content>
+            <div class="no-resources">
+              <mat-icon>folder_open</mat-icon>
+              <h3>No Resources Available</h3>
+              <p>This project doesn't have any modules or attachments yet.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

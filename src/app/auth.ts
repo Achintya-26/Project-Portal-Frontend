@@ -34,4 +34,8 @@ export class AuthService {
   get isLoggedIn() {
     return !!this.token;
   }
+
+  getCurrentUserProfile() {
+    return this.http.get<any>(`${this.url}/profile`);
+  }
 }

@@ -1,7 +1,256 @@
-<mat-card class="p-4">
-  <h1 class="text-2xl">User Projects</h1>
-  <mat-card *ngFor="let p of projects" class="mt-4 cursor-pointer" (click)="goToProject(p.id)">
-    <mat-card-title>{{ p.topic }}</mat-card-title>
-    <mat-card-subtitle>{{ p.description }}</mat-card-subtitle>
+<div class="profile-container" *ngIf="!loading">
+  <!-- User Profile Header -->
+  <mat-card class="profile-header-card">
+    <div class="profile-header p-2">
+      <div class="profile-avatar">
+        <mat-icon class="avatar-icon">person</mat-icon>
+      </div>
+      <div class="profile-info">
+        <h1 class="profile-name">
+          {{ user.first_name || user.username }} {{ user.last_name }}
+        </h1>
+        <p class="profile-title">{{ user.designation || 'Professional' }}</p>
+        <p class="profile-department" *ngIf="user.department">{{ user.department }}</p>
+        <div class="profile-actions" *ngIf="isCurrentUser">
+          <button mat-raised-button color="primary" (click)="editProfile()">
+            <mat-icon>edit</mat-icon>
+            Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
   </mat-card>
-</mat-card>
+
+  <!-- Profile Details Tabs -->
+  <mat-tab-group class="profile-tabs">
+    <!-- Personal Information Tab -->
+    <mat-tab label="Personal Information">
+      <div class="tab-content flex flex-col gap-2">
+        <mat-card class="details-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>person</mat-icon>
+              Personal Details
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Username:</label>
+                <span>{{ user.username || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Email:</label>
+                <span>{{ user.email || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Phone:</label>
+                <span>{{ user.phone || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Date of Birth:</label>
+                <span>{{ formatDate(user.date_of_birth) }}</span>
+              </div>
+              <div class="detail-item full-width" *ngIf="user.bio">
+                <label>Bio:</label>
+                <p>{{ user.bio }}</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="details-card" *ngIf="user.address || user.city || user.state || user.country">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>location_on</mat-icon>
+              Address Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="details-grid">
+              <div class="detail-item full-width" *ngIf="user.address">
+                <label>Address:</label>
+                <span>{{ user.address }}</span>
+              </div>
+              <div class="detail-item">
+                <label>City:</label>
+                <span>{{ user.city || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>State:</label>
+                <span>{{ user.state || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Country:</label>
+                <span>{{ user.country || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Postal Code:</label>
+                <span>{{ user.postal_code || 'Not specified' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Professional Information Tab -->
+    <mat-tab label="Professional">
+      <div class="tab-content flex flex-col gap-2">
+        <mat-card class="details-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>work</mat-icon>
+              Professional Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Designation:</label>
+                <span>{{ user.designation || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Department:</label>
+                <span>{{ user.department || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Experience:</label>
+                <span>{{ formatExperience(user.experience) }}</span>
+              </div>
+              <div class="detail-item full-width" *ngIf="user.skills">
+                <label>Skills:</label>
+                <mat-chip-listbox>
+                  <mat-chip-option *ngFor="let skill of (user.skills || '').split(',')">
+                    {{ skill.trim() }}
+                  </mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="details-card" *ngIf="user.linkedin_profile || user.github_profile">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>link</mat-icon>
+              Social Profiles
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="social-links">
+              <a *ngIf="user.linkedin_profile" [href]="user.linkedin_profile" target="_blank" class="social-link linkedin">
+                <mat-icon>work</mat-icon>
+                LinkedIn Profile
+              </a>
+              <a *ngIf="user.github_profile" [href]="user.github_profile" target="_blank" class="social-link github">
+                <mat-icon>code</mat-icon>
+                GitHub Profile
+              </a>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Projects Tab -->
+    <mat-tab label="Projects">
+      <div class="tab-content">
+        <!-- Owned Projects -->
+        <mat-card class="projects-section" *ngIf="ownedProjects.length > 0">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>folder</mat-icon>
+              Owned Projects ({{ ownedProjects.length }})
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="projects-grid cursor-pointer">
+              <mat-card *ngFor="let project of ownedProjects" class="project-card owned-project" (click)="goToProject(project.id)">
+                <mat-card-header>
+                  <div class="project-role-badge owner">Owner</div>
+                  <mat-card-title>{{ project.topic }}</mat-card-title>
+                  <mat-card-subtitle>{{ project.description }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="project-meta">
+                    <span class="project-status" [ngClass]="getProjectStatusClass(project.status)">
+                      {{ project.status || 'Not specified' }}
+                    </span>
+                    <span class="project-date" *ngIf="project.planned_start_date">
+                      Started: {{ formatDate(project.planned_start_date) }}
+                    </span>
+                  </div>
+                  <div class="project-team" *ngIf="project.team_members">
+                    <mat-icon>group</mat-icon>
+                    <span>{{ (project.team_members || []).length + 1 }} members</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Team Member Projects -->
+        <mat-card class="projects-section" *ngIf="memberProjects.length > 0">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>group</mat-icon>
+              Team Member Projects ({{ memberProjects.length }})
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="projects-grid">
+              <mat-card *ngFor="let project of memberProjects" class="project-card member-project" (click)="goToProject(project.id)">
+                <mat-card-header>
+                  <div class="project-role-badge member">Team Member</div>
+                  <mat-card-title>{{ project.topic }}</mat-card-title>
+                  <mat-card-subtitle>{{ project.description }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="project-meta">
+                    <span class="project-owner">
+                      <mat-icon>person</mat-icon>
+                      Owner: {{ project.owner_username }}
+                    </span>
+                    <span class="project-status" [ngClass]="getProjectStatusClass(project.status)">
+                      {{ project.status || 'Not specified' }}
+                    </span>
+                  </div>
+                  <div class="project-team" *ngIf="project.team_members">
+                    <mat-icon>group</mat-icon>
+                    <span>{{ (project.team_members || []).length + 1 }} members</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- No Projects Message -->
+        <mat-card *ngIf="projects.length === 0" class="no-projects-card">
+          <mat-card-content>
+            <div class="no-projects">
+              <mat-icon>folder_open</mat-icon>
+              <h3>No Projects Found</h3>
+              <p>This user hasn't been involved in any projects yet.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <mat-card class="loading-card">
+    <mat-card-content>
+      <div class="loading-content">
+        <mat-icon class="loading-icon">person</mat-icon>
+        <h3>Loading Profile...</h3>
+        <p>Please wait while we fetch the user information.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

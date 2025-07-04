@@ -1,13 +1,253 @@
-<mat-card class="p-4 max-w-xl mx-auto">
+<mat-card class="p-4 max-w-5xl mx-auto">
   <h1 class="text-2xl mb-4">Add New Project</h1>
-  <form (ngSubmit)="submit()">
-    <mat-form-field class="w-full"><input matInput placeholder="Topic" [(ngModel)]="topic" name="topic" /></mat-form-field>
-    <mat-form-field class="w-full"><textarea matInput placeholder="Description" [(ngModel)]="description" name="description"></textarea></mat-form-field>
-    <mat-form-field class="w-full"><input matInput placeholder="Repo Link" [(ngModel)]="repo_link" name="repo_link" /></mat-form-field>
-    <mat-form-field class="w-full"><input matInput placeholder="Team Members (comma)" [(ngModel)]="team" name="team" /></mat-form-field>
-    <input type="file" multiple (change)="onFileChange($event)" class="mb-4" />
-    <div class="flex justify-end">
-    <button class="!block" mat-raised-button color="primary">Submit</button>
+
+  <mat-accordion multi>
+
+    <!-- 1. Overview -->
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header><span>Basic Details</span></mat-expansion-panel-header>
+
+      <mat-form-field class="w-full">
+        <input matInput placeholder="Project Name" [(ngModel)]="project.project_name" name="project_name" required>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <textarea matInput placeholder="Description" [(ngModel)]="project.description" name="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <textarea matInput placeholder="Search Keywords (comma-separated)" [(ngModel)]="project.search_keywords" name="search_keywords" rows="2"></textarea>
+        <mat-hint>Enter keywords that will help users find this project in search (e.g., angular, web development, API integration)</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <input matInput placeholder="Project Manager" [(ngModel)]="project.project_manager" name="project_manager">
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-select placeholder="Status" [(ngModel)]="project.status" name="status">
+          <mat-option value="Planning">Planning</mat-option>
+          <mat-option value="In Progress">In Progress</mat-option>
+          <mat-option value="Completed">Completed</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <input matInput placeholder="Source Process Template" [(ngModel)]="project.source_process_template" name="source_process_template">
+      </mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- 2. Dates -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Project Dates</span></mat-expansion-panel-header>
+
+      <mat-form-field class="m-2"><input matInput [matDatepicker]="ps" placeholder="Planned Start Date" [(ngModel)]="project.planned_start_date" name="planned_start_date"><mat-datepicker-toggle matSuffix [for]="ps"></mat-datepicker-toggle><mat-datepicker #ps></mat-datepicker></mat-form-field>
+
+      <mat-form-field class="m-2"><input matInput [matDatepicker]="pe" placeholder="Planned End Date" [(ngModel)]="project.planned_end_date" name="planned_end_date"><mat-datepicker-toggle matSuffix [for]="pe"></mat-datepicker-toggle><mat-datepicker #pe></mat-datepicker></mat-form-field>
+
+      <!-- <mat-form-field class="m-2"><input matInput [matDatepicker]="asd" placeholder="Actual Start Date" [(ngModel)]="project.actual_start_date" name="actual_start_date"><mat-datepicker-toggle matSuffix [for]="asd"></mat-datepicker-toggle><mat-datepicker #asd></mat-datepicker></mat-form-field> -->
+
+      <!-- <mat-form-field class="m-2"><input matInput [matDatepicker]="ae" placeholder="Actual End Date" [(ngModel)]="project.actual_end_date" name="actual_end_date"><mat-datepicker-toggle matSuffix [for]="ae"></mat-datepicker-toggle><mat-datepicker #ae></mat-datepicker></mat-form-field> -->
+
+      <mat-form-field class="m-2"><input matInput [matDatepicker]="gl" placeholder="Go Live Date" [(ngModel)]="project.go_live_date" name="go_live_date"><mat-datepicker-toggle matSuffix [for]="gl"></mat-datepicker-toggle><mat-datepicker #gl></mat-datepicker></mat-form-field>
+
+      <!-- <mat-form-field class="m-2"><input matInput [matDatepicker]="rs" placeholder="Requested Start Date" [(ngModel)]="project.requested_start_date" name="requested_start_date"><mat-datepicker-toggle matSuffix [for]="rs"></mat-datepicker-toggle><mat-datepicker #rs></mat-datepicker></mat-form-field> -->
+
+      <!-- <mat-form-field class="m-2"><input matInput [matDatepicker]="re" placeholder="Requested End Date" [(ngModel)]="project.requested_end_date" name="requested_end_date"><mat-datepicker-toggle matSuffix [for]="re"></mat-datepicker-toggle><mat-datepicker #re></mat-datepicker></mat-form-field> -->
+    </mat-expansion-panel>
+
+    <!-- 3. Customer Details -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Customer Details</span></mat-expansion-panel-header>
+
+      <mat-form-field class="w-full"><input matInput placeholder="Customer Name" [(ngModel)]="project.customer_name" name="customer_name"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Customer Address" [(ngModel)]="project.customer_address" name="customer_address"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Customer Contact Details" [(ngModel)]="project.customer_contact_details" name="customer_contact_details"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Customer Designation" [(ngModel)]="project.customer_designation" name="customer_designation"></mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- 4. Project Financial -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Project Financials & Revenue</span></mat-expansion-panel-header>
+
+      <mat-form-field class="w-full"><input matInput placeholder="Incidental Budget Amount" [(ngModel)]="project.incidental_budget_amount" name="incidental_budget_amount"></mat-form-field>
+
+      <mat-form-field class="w-full"><input matInput placeholder="Project Financial Status" [(ngModel)]="project.project_financial_status" name="project_financial_status"></mat-form-field>
+
+      <mat-form-field class="w-full"><input matInput placeholder="Sales Person 1" [(ngModel)]="project.sales_person_1" name="sales_person_1"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Sales Person 2" [(ngModel)]="project.sales_person_2" name="sales_person_2"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Sales Person 3" [(ngModel)]="project.sales_person_3" name="sales_person_3"></mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- 5. Team Members -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Team Members & Resources</span></mat-expansion-panel-header>
+
+      <div *ngFor="let member of project.team_members; let i = index" class="mb-2">
+        <mat-form-field class="w-full"><input matInput placeholder="User ID" [(ngModel)]="member.userId" name="userId_{{i}}"></mat-form-field>
+        <mat-form-field class="w-full"><input matInput placeholder="Resource Details" [(ngModel)]="member.resourceDetails" name="resourceDetails_{{i}}"></mat-form-field>
+      </div>
+      <button mat-button color="primary" (click)="addTeamMember()">Add Team Member</button>
+    </mat-expansion-panel>
+
+    <!-- 6. Additional Details -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Additional Project Details</span></mat-expansion-panel-header>
+
+      <mat-form-field class="w-full"><input matInput placeholder="Task Module" [(ngModel)]="project.task_module" name="task_module"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Product Version" [(ngModel)]="project.product_version" name="product_version"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Task Actuals Tracking Mode" [(ngModel)]="project.task_actuals_tracking_mode" name="task_actuals_tracking_mode"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Delivery Milestone" [(ngModel)]="project.delivery_milestone" name="delivery_milestone"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Modules Implemented (comma-separated)" [(ngModel)]="project.modules_implemented" name="modules_implemented"></mat-form-field>
+
+      <mat-checkbox [(ngModel)]="project.agile_project" name="agile_project">Agile Project</mat-checkbox>
+      <mat-checkbox [(ngModel)]="project.emd_bg_required" name="emd_bg_required">EMD / BG Required</mat-checkbox>
+    </mat-expansion-panel>
+
+    <!-- 7. Organization & Business -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header><span>Organization & Business</span></mat-expansion-panel-header>
+
+      <!-- <mat-form-field class="w-full"><input matInput placeholder="Project Order No" [(ngModel)]="project.project_order_no" name="project_order_no"></mat-form-field> -->
+      <mat-form-field class="w-full"><input matInput placeholder="Entity" [(ngModel)]="project.entity" name="entity"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Region" [(ngModel)]="project.region" name="region"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Division" [(ngModel)]="project.division" name="division"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Category of PID" [(ngModel)]="project.pid_category" name="pid_category"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Business Unit" [(ngModel)]="project.business_unit" name="business_unit"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="SUB LOB" [(ngModel)]="project.sub_lob" name="sub_lob"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Inter Company PID" [(ngModel)]="project.inter_company_pid" name="inter_company_pid"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Geography" [(ngModel)]="project.geography" name="geography"></mat-form-field>
+      <mat-form-field class="w-full"><input matInput placeholder="Group" [(ngModel)]="project.group" name="group"></mat-form-field>
+      <!-- <mat-form-field class="w-full"><input matInput placeholder="Function" [(ngModel)]="project.function" name="function"></mat-form-field> -->
+      <mat-form-field class="w-full"><input matInput placeholder="Sub Product" [(ngModel)]="project.sub_product" name="sub_product"></mat-form-field>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <!-- Attachments -->
+  <div class="mt-4">
+    <label class="block mb-2 font-medium">Attachments:</label>
+    
+    <!-- File Input -->
+    <div class="mb-4">
+      <input 
+        type="file" 
+        multiple 
+        (change)="onFileChange($event)" 
+        class="hidden" 
+        #fileInput
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.zip,.rar,.txt">
+      
+      <button 
+        mat-raised-button 
+        color="accent" 
+        (click)="fileInput.click()"
+        class="mb-2">
+        <mat-icon>attach_file</mat-icon>
+        Choose Files
+      </button>
     </div>
-  </form>
+
+    <!-- Selected Files Display -->
+    <div *ngIf="attachments.length > 0" class="mb-4">
+      <h3 class="text-lg font-medium mb-2">Selected Files ({{ attachments.length }})</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div 
+          *ngFor="let file of attachments; let i = index" 
+          class="flex flex-col p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors shadow-sm">
+          
+          <!-- File Preview Section -->
+          <div class="mb-3 flex justify-center">
+            <!-- Image Preview -->
+            <div *ngIf="isImageFile(file)" class="relative">
+              <img 
+                [src]="getFilePreview(file)" 
+                [alt]="file.name"
+                class="w-32 h-32 object-cover rounded-lg border shadow-sm"
+                style="max-width: 128px; max-height: 128px;">
+              <div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                <mat-icon class="text-sm">image</mat-icon>
+              </div>
+            </div>
+            
+            <!-- PDF Preview -->
+            <div *ngIf="isPdfFile(file)" class="relative">
+              <div class="w-32 h-32 bg-white rounded-lg border shadow-sm overflow-hidden">
+                <img 
+                  *ngIf="getPdfPreview(file.name)" 
+                  [src]="getPdfPreview(file.name)"
+                  [alt]="file.name + ' preview'"
+                  class="w-full h-full object-cover">
+                <div *ngIf="!getPdfPreview(file.name)" class="w-full h-full bg-red-100 flex items-center justify-center">
+                  <mat-icon class="text-red-600 text-4xl">picture_as_pdf</mat-icon>
+                </div>
+              </div>
+              <div class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                PDF
+              </div>
+            </div>
+            
+            <!-- Document Preview -->
+            <div *ngIf="isDocumentFile(file) && !isPdfFile(file)" class="relative">
+              <div class="w-32 h-32 bg-white rounded-lg border shadow-sm overflow-hidden">
+                <img 
+                  [src]="generateDocumentPreview(file)"
+                  [alt]="file.name + ' preview'"
+                  class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                <mat-icon class="text-xs">description</mat-icon>
+              </div>
+            </div>
+            
+            <!-- Other File Types Preview -->
+            <div *ngIf="!isImageFile(file) && !isPdfFile(file) && !isDocumentFile(file)" class="relative">
+              <div class="w-32 h-32 bg-blue-100 rounded-lg border shadow-sm flex items-center justify-center">
+                <mat-icon class="text-blue-600 text-5xl">{{ getFileIcon(file.name) }}</mat-icon>
+              </div>
+              <div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                <mat-icon class="text-xs">attach_file</mat-icon>
+              </div>
+            </div>
+          </div>
+          
+          <!-- File Info -->
+          <div class="flex-1 text-center">
+            <p class="text-sm font-medium text-gray-900 truncate mb-1" [title]="file.name">
+              {{ file.name }}
+            </p>
+            <p class="text-xs text-gray-500 mb-2">
+              {{ formatFileSize(file.size) }}
+            </p>
+            
+            <!-- File Type Badge -->
+            <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700 mb-2">
+              <mat-icon class="text-xs mr-1">{{ getFileIcon(file.name) }}</mat-icon>
+              {{ file.type || 'Unknown' }}
+            </div>
+          </div>
+          
+          <!-- Remove Button -->
+          <div class="flex justify-center mt-2">
+            <button 
+              mat-icon-button 
+              color="warn" 
+              (click)="removeFile(i)"
+              class="hover:bg-red-100"
+              [title]="'Remove ' + file.name">
+              <mat-icon class="text-red-600">delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="attachments.length === 0" class="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+      <mat-icon class="text-gray-400 text-4xl mb-2">cloud_upload</mat-icon>
+      <p class="text-gray-500 mb-2">No files selected</p>
+      <p class="text-sm text-gray-400">Click "Choose Files" to upload documents</p>
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" class="mt-4" (click)="submit()">Submit Project</button>
 </mat-card>

@@ -6,6 +6,7 @@ import { AddProject } from './add-project/add-project';
 import { Profile } from './profile/profile';
 import { UserProfile } from './user-profile/user-profile';
 import { ProjectDetails } from './project-detail/project-detail';
+import { MyProfile } from './my-profile/my-profile';
 
 export const routes: Routes = [
   { path: '', component: ProjectList, pathMatch:'full'},
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'add', component: AddProject },
   { path: 'profile', component: Profile },
+  { path: 'my-profile', component: MyProfile },
   {path:'user/:id', component:UserProfile},
   {path:'project/:id', component:ProjectDetails}
 ];

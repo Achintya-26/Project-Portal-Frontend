@@ -19,11 +19,15 @@ export class ProjectService {
   }
   
   getById(id: string) {
-    return this.http.get<any>(`${this.url}/${id}`);
+    return this.http.get<any>(`${this.url}/${id}`)
   }
 
   getByUserId(id: string) {
     return this.http.get<any[]>(`${this.url}/user/${id}`);
   }
 
+  // Get comprehensive user profile with all projects
+  getUserProfile(id: string) {
+    return this.http.get<{user: any, projects: any[]}>(`${this.url}/user/${id}/profile`);
+  }
 }

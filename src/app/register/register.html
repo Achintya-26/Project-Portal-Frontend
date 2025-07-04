@@ -1,17 +1,134 @@
-<mat-card class="max-w-md mx-auto mt-8 p-6">
-  <h1 class="text-2xl mb-4">Register</h1>
+<mat-card class="max-w-4xl mx-auto mt-8 p-6">
+  <h1 class="text-3xl mb-6 text-center">Create Your Account</h1>
+  
   <form (ngSubmit)="register()">
-    <mat-form-field class="w-full">
-      <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
-    </mat-form-field>
-    <mat-form-field class="w-full">
-      <input matInput placeholder="Email" [(ngModel)]="email" name="email" required>
-    </mat-form-field>
-    <mat-form-field class="w-full">
-      <input matInput placeholder="Password" [(ngModel)]="password" name="password" type="password" required>
-    </mat-form-field>
-    <div *ngIf="error" class="text-red-500 text-sm mb-2">{{ error }}</div>
-    <button mat-raised-button color="primary" type="submit">Register</button>
+    <mat-accordion multi>
+      
+      <!-- Basic Information -->
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <span class="text-lg font-medium">Basic Information</span>
+        </mat-expansion-panel-header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Email" [(ngModel)]="email" name="email" type="email" required>
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Password" [(ngModel)]="password" name="password" type="password" required>
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Phone Number" [(ngModel)]="phone" name="phone" type="tel">
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Personal Details -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <span class="text-lg font-medium">Personal Details</span>
+        </mat-expansion-panel-header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field class="w-full">
+            <input matInput placeholder="First Name" [(ngModel)]="firstName" name="firstName">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Last Name" [(ngModel)]="lastName" name="lastName">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Date of Birth" [(ngModel)]="dateOfBirth" name="dateOfBirth" type="date">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <textarea matInput placeholder="Bio / About Me" [(ngModel)]="bio" name="bio" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Professional Information -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <span class="text-lg font-medium">Professional Information</span>
+        </mat-expansion-panel-header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Designation / Job Title" [(ngModel)]="designation" name="designation">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Department" [(ngModel)]="department" name="department">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <mat-select placeholder="Years of Experience" [(ngModel)]="experience" name="experience">
+              <mat-option value="0-1">0-1 years</mat-option>
+              <mat-option value="1-3">1-3 years</mat-option>
+              <mat-option value="3-5">3-5 years</mat-option>
+              <mat-option value="5-10">5-10 years</mat-option>
+              <mat-option value="10+">10+ years</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <textarea matInput placeholder="Skills (comma-separated)" [(ngModel)]="skills" name="skills" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Contact & Address -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <span class="text-lg font-medium">Contact & Address</span>
+        </mat-expansion-panel-header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field class="w-full md:col-span-2">
+            <textarea matInput placeholder="Address" [(ngModel)]="address" name="address" rows="2"></textarea>
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="City" [(ngModel)]="city" name="city">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="State / Province" [(ngModel)]="state" name="state">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Country" [(ngModel)]="country" name="country">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Postal Code" [(ngModel)]="postalCode" name="postalCode">
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Social Profiles -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <span class="text-lg font-medium">Social Profiles (Optional)</span>
+        </mat-expansion-panel-header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field class="w-full">
+            <input matInput placeholder="LinkedIn Profile URL" [(ngModel)]="linkedinProfile" name="linkedinProfile" type="url">
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input matInput placeholder="GitHub Profile URL" [(ngModel)]="githubProfile" name="githubProfile" type="url">
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+
+    <div class="mt-6">
+      <div *ngIf="error" class="text-red-500 text-sm mb-4 p-3 bg-red-50 rounded">{{ error }}</div>
+      <button mat-raised-button color="primary" type="submit" class="w-full py-3 text-lg">
+        Create Account
+      </button>
+    </div>
   </form>
-  <p class="mt-4 text-sm">Already have an account? <a routerLink="/login" class="text-blue-500">Login</a></p>
+  
+  <p class="mt-4 text-sm text-center">
+    Already have an account? 
+    <a routerLink="/login" class="text-blue-500 hover:text-blue-700 font-medium">Login here</a>
+  </p>
 </mat-card>
