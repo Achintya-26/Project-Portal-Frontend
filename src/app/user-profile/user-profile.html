@@ -192,15 +192,15 @@
         </mat-card>
 
         <!-- Team Member Projects -->
-        <mat-card class="projects-section" *ngIf="memberProjects.length > 0">
+        <mat-card class="projects-section mt-2" *ngIf="memberProjects.length > 0">
           <mat-card-header>
             <mat-card-title>
               <mat-icon>group</mat-icon>
               Team Member Projects ({{ memberProjects.length }})
             </mat-card-title>
           </mat-card-header>
-          <mat-card-content>
-            <div class="projects-grid">
+          <mat-card-content class="">
+            <div class="projects-grid flex flex-col gap-3 cursor-pointer">
               <mat-card *ngFor="let project of memberProjects" class="project-card member-project" (click)="goToProject(project.id)">
                 <mat-card-header>
                   <div class="project-role-badge member">Team Member</div>

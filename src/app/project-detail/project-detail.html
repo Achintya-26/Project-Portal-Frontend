@@ -318,7 +318,7 @@
                 <div class="team-member" *ngFor="let member of parseTeamMembers(project.team_members)">
                   <mat-icon>person</mat-icon>
                   <div class="member-info">
-                    <span class="member-name">User ID: {{ member.userId }}</span>
+                    <span class="member-name"><a routerLink="/user/{{ member.userId }}">User Id : {{ member.userId }}</a></span>
                     <span class="member-role">{{ member.resourceDetails || 'Team Member' }}</span>
                   </div>
                 </div>
